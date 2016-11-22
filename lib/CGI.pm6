@@ -1,3 +1,6 @@
+### WARNING: This file is auto-generated from file 'CGI-Source.pm6'. ###
+### WARNING: Any edits to this file will be lost.                    ###
+
 unit class CGI;
 
 

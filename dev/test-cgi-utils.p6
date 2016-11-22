@@ -128,6 +128,8 @@ sub filter() {
 	    next;
 	}
 	elsif $line ~~ / unit \s+ class \s+ 'CGI-Source' \s* ';' / {
+	    $fho.say: "### WARNING: This file is auto-generated from file 'CGI-Source.pm6'. ###";
+	    $fho.say: "### WARNING: Any edits to this file will be lost.                    ###\n";
 	    $fho.say: "unit class CGI;";
 	    next;
 	}
