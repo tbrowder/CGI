@@ -3,7 +3,7 @@ unit class CGI-Source;
 # for testing, provides %*ENV;
 use CGI-TEST-ENV;
 
-my $debug = 1;
+my $debug = 0;
 
 # methods from Perl 5 CGI;
 

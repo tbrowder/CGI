@@ -2,12 +2,14 @@
 
 use lib <.>;
 
-use CGI-Utils-Template;
+use CGI-Source;
 use Test;
 
-my $c = CGI-Utils-Template.new;
+my $c = CGI-Source.new;
 
-isa-ok $c, CGI-Utils-Template;
+isa-ok $c, CGI-Source;
 
 is $c.http('context-document-root'),
   '/home/web-server-common/cgi-bin-cmn/';
+
+done-testing
