@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-use lib <.>;
+use lib <../dev>;
 
 use CGI-Source;
 use Test;
