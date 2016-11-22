@@ -1,4 +1,4 @@
-unit module CGI-Utils-TEST-ENV;
+unit module CGI-TEST-ENV;
 
 my %env = (
 
