@@ -2,7 +2,7 @@
 
 use lib <.>;
 
-use CGI-Utils-Template;
+use CGI-Source;
 use CGI-Vars;
 use Test;
 
@@ -10,8 +10,8 @@ my $debug  = 0;
 my $filter = 0;
 my $test   = 0;
 
-my $if = 'CGI-Utils-Template.pm6';
-my $of = 'CGI-Utils.pm6';
+my $if = 'CGI-Source.pm6';
+my $of = 'CGI.pm6';
 
 if !@*ARGS {
     say qq:to/HERE/;
@@ -19,7 +19,7 @@ if !@*ARGS {
 
     Modes:
 
-      test   - runs tests on the CGI-Utils-Template module using a local
+      test   - runs tests on the CGI-Source class module using a local
                CGI vars hash
 
       filter - filters test lines out of $if to produce $of for web use
@@ -76,18 +76,19 @@ for %tls.keys.sort -> $var {
 }
 
 # now for the test
+my $cgi = CGI-Source.new;
 for %env.sort(*.key)>>.kv.flat -> $var is copy, $val {
     $var .= lc;
     say $var if $debug;
     my ($s, $frag);
     if $var ~~ /:i ^HTTP/ {
 	$frag = 'http';
-	$s = http(:parameter($var));
+	$s = $cgi.http(:parameter($var));
     }
     elsif $var ~~ /^SSL/ {
 	next;
 	$frag = 'ssl';
-	$s = ssl(:parameter($var));
+	$s = $cgi.ssl(:parameter($var));
     }
 
     if $s {
@@ -113,11 +114,11 @@ sub filter() {
 	elsif $line ~~ / for \s+ testing / {
 	    next;
 	}
-	elsif $line ~~ / use \s+ 'CGI-Utils-TEST-ENV;' / {
+	elsif $line ~~ / use \s+ 'CGI-TEST-ENV' \s* ';' / {
 	    next;
 	}
-	elsif $line ~~ / unit \s+ module \s+ 'CGI-Utils-Template;' / {
-	    $fho.say: "unit module CGI-Utils;";
+	elsif $line ~~ / unit \s+ class \s+ 'CGI-Source' \s* ';' / {
+	    $fho.say: "unit class CGI;";
 	    next;
 	}
 
