@@ -10,12 +10,14 @@ my $debug  = 0;
 my $filter = 0;
 my $test   = 0;
 
+# defaults
 my $if = 'CGI-Source.pm6';
 my $of = 'CGI.pm6';
+my $odir = '.';
 
 if !@*ARGS {
     say qq:to/HERE/;
-    Usage: $*PROGRAM   t[est] | f[ilter] [d[ebug]]
+    Usage: $*PROGRAM   t[est] | f[ilter] [o[dir]=X] [d[ebug]]
 
     Modes:
 
@@ -25,6 +27,8 @@ if !@*ARGS {
       filter - filters test lines out of $if to produce $of for web use
 
     Options:
+
+      odir=X - where X is the desired output directory (default: '.');
 
       debug  - for development
 
@@ -43,7 +47,11 @@ for @*ARGS -> $arg {
 	$filter = 0;
 	say "DEBUG: \$arg = 'test'" if $debug;
     }
-    elsif $arg ~~ /:i ^d [ebug]? $/ {
+    elsif $arg ~~ /:i ^o [dir]? '=' (<[\w+/_.]>+) $/ {
+	$odir = ~$0;
+	say "DEBUG: \$arg = 'odir=$odir'" if $debug;
+    }
+    elsif $arg ~~ /:i ^deb [ug]? $/ {
 	$debug = 1;
 	say "DEBUG: \$arg = 'debug'" if $debug;
     }
@@ -52,12 +60,14 @@ for @*ARGS -> $arg {
     }
 }
 
+die "DEBUG exit" if $debug;
+
 if $filter {
     filter();
     say qq:to/HERE/;
     Normal end. See output file
 
-	   $of
+	   $odir/$of
     HERE
 
     exit;
@@ -104,7 +114,7 @@ for %env.sort(*.key)>>.kv.flat -> $var is copy, $val {
 #### subroutines ####
 sub filter() {
     my $fhi = open $if, :r;
-    my $fho = open $of, :w;
+    my $fho = open "$odir/$of", :w;
 
     for $fhi.lines -> $line {
 	# ignore or change certain lines
