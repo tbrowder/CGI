@@ -5,9 +5,9 @@ my $create = 0;
 
 # for creating a test %*ENV environment
 my $if = 'collected-envvars-data.txt';
-my $of = 'CGI-Utils-TEST-ENV-tmp.pm6';
+my $of = 'CGI-TEST-ENV-tmp.pm6';
 
-my $f2 = 'CGI-Utils-TEST-ENV.pm6';
+my $f2 = 'CGI-TEST-ENV.pm6';
 
 if !@*ARGS {
     say qq:to/HERE/;
