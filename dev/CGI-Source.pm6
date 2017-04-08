@@ -7,19 +7,16 @@ my $debug = 0;
 
 # methods from Perl 5 CGI;
 
-#### Method: server-name
-# Return the name of the server
-####
-method server-name {
+# Method: server-name
+# Purpose: Return the name of the server
+method server-name() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<SERVER_NAME> || 'localhost';
 } # server-name
 
-#### Method: http
-# Return the value of an HTTP variable, or
-# the list of variables if none provided
-####
-method http($parameter is copy) {
+# Method: http
+# Purpose: Return the value of an HTTP variable, or the list of HTTP_* variables if no argument is provided
+method http(:$parameter is copy) {
     state %*ENV = get-env(); # need for every method using %*ENV
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
     if $parameter {
@@ -40,14 +37,11 @@ method http($parameter is copy) {
     }
 
     # returning a list
-    return grep { /^ HTTP / }, %*ENV.keys;
+    return grep { /^ HTTP_ / }, %*ENV.keys;
 } # http
 
-#### Method: https
-# Return the value of HTTPS, or
-# the value of an HTTPS variable, or
-# the list of variables
-####
+# Method: https
+# Purpose: Return the value of HTTPS, or the value of an HTTPS variable, or the list of HTTPS_* variables if no argument is provided
 method https(:$parameter is copy) {
     state %*ENV = get-env(); # need for every method using %*ENV
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
@@ -69,6 +63,8 @@ method https(:$parameter is copy) {
     return grep { /^ HTTPS / }, %*ENV.keys;
 } # https
 
+# Method: ssl
+# Purpose: Return the value of an SSL variable, or the list of SSL variables if no argument is provided
 method ssl(:$parameter is copy) {
     state %*ENV = get-env(); # need for every method using %*ENV
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
@@ -90,56 +86,45 @@ method ssl(:$parameter is copy) {
     return grep { /^ SSL / }, %*ENV.keys;
 } # ssl
 
-#### Method: virtual-host
-# Return the name of the virtual-host, which
-# is not always the same as the server
-######
+# Method: virtual-host
+# Purpose: Return the name of the virtual-host (which is not always the same as the server)
 method virtual-host() {
     my $vh = .http('x_forwarded_host') || .http('host') || .server-name();
     $vh ~~ s/\:\d+$//;           # get rid of port number
     return $vh;
 } # virtual-host
 
-#### Method: remote-host
-# Return the name of the remote host, or its IP
-# address if unavailable.  If this variable isn't
-# defined, it returns "localhost" for debugging
-# purposes.
-####
-method remote-host {
+# Method: remote-host
+# Purpose: Return the name of the remote host, or its IP address if unavailable.  If this variable isn't defined, it returns "localhost" for debugging purposes.
+method remote-host() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<REMOTE_HOST> || %*ENV<REMOTE_ADDR>
     || 'localhost';
 } # remote-host
 
-#### Method: remote_addr
-# Return the IP addr of the remote host.
-####
-method remote-addr {
+# Method: remote-addr
+# Purpose: Return the IP address of the remote host.
+method remote-addr() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<REMOTE_ADDR> || '127.0.0.1';
 } # remote-addr
 
-#### Method: referer
-# Return the HTTP_REFERER: useful for generating
-# a GO BACK button.
-####
+# Method: referer
+# Purpose: Return the HTTP_REFERER: useful for generating a GO BACK button.
 method referer() {
     return .http('referer');
 } # referer
 
-#### Method: server-software
-# Return the name of the server software
-####
-method server-software {
+# Method: server-software
+# Purpose: Return the name of the server software
+method server-software() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<SERVER_SOFTWARE> || 'cmdline';
 } # server-software
 
-#### Method: virtual-port
-# Return the server port, taking virtual hosts into account
-####
-method virtual-port {
+# Method: virtual-port
+# Purpose: Return the server port, taking virtual hosts into account
+method virtual-port() {
     my $vh = .http('x_forwarded_host') || .http('host');
     if $vh {
         if $vh ~~ /\: (\d+) $/ {
@@ -154,25 +139,22 @@ method virtual-port {
     }
 } # virtual-port
 
-#### Method: server-port
-# Return the tcp/ip port the server is running on
-####
+# Method: server-port
+# Purpose: Return the tcp/ip port the server is running on
 method server-port() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<SERVER_PORT> || 80; # for debugging
 } # server-port
 
-#### Method: server-protocol
-# Return the protocol (usually HTTP/1.0)
-####
+# Method: server-protocol
+# Purpose: Return the protocol (usually HTTP/1.0)
 method server-protocol {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<SERVER_PROTOCOL> || 'HTTP/1.0'; # for debugging
 } # server-protocol
 
-#### Method: protocol
-# Return the protocol (http or https currently)
-####
+# Method: protocol
+# Purpose: Return the protocol (currently 'http' or 'https')
 method protocol() {
     return 'https' if uc(.https()) eq 'ON';
     return 'https' if .server-port() == 443;
@@ -183,36 +165,29 @@ method protocol() {
     # return "\L{$protocol}\E"; # \L and \E ???: \L - Lowercase till \E
 } # protocol
 
-#### Method: remote-ident
-# Return the identity of the remote user
-# (but only if his host is running identd)
-####
+# Method: remote-ident
+# Purpose: Return the identity of the remote user (but only if his or her host is running identd)
 method remote-ident() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<REMOTE_IDENT> ?? %*ENV<REMOTE_IDENT> !! '';
 } # remote-ident
 
-#### Method: auth-type
-# Return the type of use verification/authorization in use, if any.
-####
+# Method: auth-type
+# Purpose: Return the type of use verification/authorization in use, if any.
 method auth-type {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<AUTH_TYPE> ?? %*ENV<AUTH_TYPE> !! '';
 } # auth-type
 
-#### Method: remote-user
-# Return the authorization name used for user
-# verification.
-####
+# Method: remote-user
+# Purpose: Return the authorization name used for user verification.
 method remote-user {
     state %*ENV = get-env(); # need for every method using %*ENV
     return %*ENV<REMOTE_USER> ?? %*ENV<REMOTE_USER> !! '';
 } # remote-user
 
-#### Method: user-name
-# Try to return the remote user's name by hook or by
-# crook
-####
+# Method: user-name
+# Purpose: Try to return the remote user's name by hook or by crook
 method user-name() {
     state %*ENV = get-env(); # need for every method using %*ENV
     return .http('from') || %*ENV<REMOTE_IDENT> || %*ENV<REMOTE_USER>;

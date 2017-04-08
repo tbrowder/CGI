@@ -1,19 +1,21 @@
 #!/usr/bin/env perl6
 
+use Test;
+
 use lib <../dev dev>;
 
 use CGI-Source;
-use Test;
 
 my $c = CGI-Source.new;
 
-isa-ok $c, CGI-Source;
 use-ok 'CGI';
+isa-ok $c, CGI-Source;
 
+lives-ok { $c.http(:parameter<context-document-root>); }
 
-is $c.http('context-document-root'),
-  '/home/web-server-common/cgi-bin-cmn/';
-like $c.http('context-document-root'),
+=begin pod
+like $res,
   /^ '/home/web-server-common/cgi-bin-cmn/' /;
+=end pod
 
 done-testing;
