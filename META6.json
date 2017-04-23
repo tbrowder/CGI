@@ -4,7 +4,7 @@
     "version"     : "0.1.0",
     "description" : "Provides CGI class methods based on Perl 5's CGI module.",
     "authors"     : [ "github:tbrowder" ],
-    "license"     : "Artistic 2.0",
+    "license"     : "Artistic-2.0",
     "source-url"  : "https://github.com/tbrowder/CGI-Perl6/archive/0.1.0.zip",
     "support"     : {
         "bugtracker" : "https://github.com/tbrowder/CGI-Perl6/issues",
