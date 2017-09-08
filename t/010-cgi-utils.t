@@ -6,7 +6,7 @@ use lib <../dev dev>;
 
 use CGI-Source;
 
-plan 2;
+plan 3;
 
 my $c = CGI-Source.new;
 
