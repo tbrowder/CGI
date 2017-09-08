@@ -6,6 +6,8 @@ use lib <../dev dev>;
 
 use CGI-Source;
 
+plan 2;
+
 my $c = CGI-Source.new;
 
 use-ok 'CGI';
@@ -17,5 +19,3 @@ lives-ok { $c.http(:parameter<context-document-root>); }
 like $res,
   /^ '/home/web-server-common/cgi-bin-cmn/' /;
 =end pod
-
-done-testing;
