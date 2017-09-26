@@ -13,7 +13,8 @@
         "CGI" : "lib/CGI.pm6"
     },
     "test-depends"     : [
-	"Test::META"
+	"Test::META",
+        "Cro::HTTP::Client"
     ],
     "depends" : [
     ],
