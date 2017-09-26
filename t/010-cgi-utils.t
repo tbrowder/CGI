@@ -13,9 +13,10 @@ my $c = CGI-Source.new;
 use-ok 'CGI';
 isa-ok $c, CGI-Source;
 
-lives-ok { $c.http(:parameter<context-document-root>); }
+my $res;
+lives-ok { my $res = $c.http(:parameter<context-document-root>); }
 
-=begin pod
+#=begin pod
 like $res,
   /^ '/home/web-server-common/cgi-bin-cmn/' /;
-=end pod
+#=end pod

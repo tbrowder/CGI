@@ -2,8 +2,6 @@
 
 EXE := ./test-cgi-utils.p6
 
-EXE2 := create-md.p6
-
 DESTDIR = ../lib
 
 DEBUG =

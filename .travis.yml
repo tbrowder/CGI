@@ -1,7 +1,13 @@
-sudo: false
+sudo: true
 language: perl6
 perl6:
     - latest
+
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y apache2
+    - sudo ./travis/install.sh
+
 install:
     - rakudobrew build-zef
     - zef --deps-only install .

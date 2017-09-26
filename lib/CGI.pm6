@@ -15,7 +15,8 @@ method server-name() {
 } # server-name
 
 # Method: http
-# Purpose: Return the value of an HTTP variable, or the list of HTTP_* variables if no argument is provided
+# Purpose: Return the value of an HTTP variable, or the list of HTTP_*
+#          variables if no argument is provided
 method http(:$parameter is copy) {
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
     if $parameter {
@@ -40,7 +41,9 @@ method http(:$parameter is copy) {
 } # http
 
 # Method: https
-# Purpose: Return the value of HTTPS, or the value of an HTTPS variable, or the list of HTTPS_* variables if no argument is provided
+# Purpose: Return the value of HTTPS, or the value of an HTTPS
+#          variable, or the list of HTTPS_* variables if no argument is
+#          provided
 method https(:$parameter is copy) {
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
     if $parameter {
@@ -62,7 +65,8 @@ method https(:$parameter is copy) {
 } # https
 
 # Method: ssl
-# Purpose: Return the value of an SSL variable, or the list of SSL variables if no argument is provided
+# Purpose: Return the value of an SSL variable, or the list of SSL
+#          variables if no argument is provided
 method ssl(:$parameter is copy) {
     say "DEBUG1: \$parameter => '$parameter'" if $debug;
     if $parameter {
@@ -84,7 +88,8 @@ method ssl(:$parameter is copy) {
 } # ssl
 
 # Method: virtual-host
-# Purpose: Return the name of the virtual-host (which is not always the same as the server)
+# Purpose: Return the name of the virtual-host (which is not always
+#          the same as the server)
 method virtual-host() {
     my $vh = .http('x_forwarded_host') || .http('host') || .server-name();
     $vh ~~ s/\:\d+$//;           # get rid of port number
@@ -92,7 +97,10 @@ method virtual-host() {
 } # virtual-host
 
 # Method: remote-host
-# Purpose: Return the name of the remote host, or its IP address if unavailable.  If this variable isn't defined, it returns "localhost" for debugging purposes.
+
+# Purpose: Return the name of the remote host, or its IP address if
+#          unavailable.  If this variable isn't defined, it returns "localhost"
+#          for debugging purposes.
 method remote-host() {
     return %*ENV<REMOTE_HOST> || %*ENV<REMOTE_ADDR>
     || 'localhost';
