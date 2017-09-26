@@ -1,16 +1,11 @@
 #!/bin/bash
 
-# make sure we know where perl6 is
-P=/usr/bin/perl6
-if [[ ! -f $P ]] ; then
-    echo "perl6 is NOT at '$P'";
-    exit 1
-else
-    echo "perl6 IS at '$P'";
-fi
+apache2ctl stop
 
+# put files in proper place
 cp ./travis/*.cgi /var/www/html
+cp ./travis/*.conf /etc/apache2/conf-available
 
-apachectl stop
-apachectl start
+a2enconf my-cgi
+apache2ctl start
 

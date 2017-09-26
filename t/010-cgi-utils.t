@@ -2,21 +2,23 @@
 
 use Test;
 
-use lib <../dev dev>;
+use Cro::HTTP::Client;
+use CGI;
 
-use CGI-Source;
+# tests here use a live apache2 server (on the local host
+# and on travis
 
-plan 3;
+#plan 3;
 
-my $c = CGI-Source.new;
-
-use-ok 'CGI';
-isa-ok $c, CGI-Source;
+my $c = CGI.new:
 
 my $res;
 lives-ok { my $res = $c.http(:parameter<context-document-root>); }
 
-#=begin pod
+#=begin comment
 like $res,
   /^ '/home/web-server-common/cgi-bin-cmn/' /;
-#=end pod
+#=end comment
+
+done-testing;
+
