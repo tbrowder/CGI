@@ -10,7 +10,7 @@ use CGI;
 
 #plan 3;
 
-my $c = CGI.new:
+my $c = CGI.new;
 
 my $res;
 lives-ok { my $res = $c.http(:parameter<context-document-root>); }

@@ -2,3 +2,5 @@ dev/CGI-TEST-ENV-tmp.pm6
 .precomprelease-tool.p6
 */.precomp
 release-tool.p6
+.precomp/
+apache-test-http.p6

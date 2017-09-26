@@ -3,9 +3,13 @@
 apache2ctl stop
 
 # put files in proper place
-cp ./travis/*.cgi /var/www/html
-cp ./travis/*.conf /etc/apache2/conf-available
+#cp ./travis/*.cgi /var/www/html
+cp ./travis/*.cgi /usr/lib/cgi-bin
+#cp ./travis/*.conf /etc/apache2/conf-available
 
+a2disconf my-cgi
 a2enconf my-cgi
-apache2ctl start
 
+# also need mod_cgid
+a2enmod -q cgid
+apache2ctl start
