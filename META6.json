@@ -10,11 +10,13 @@
         "bugtracker" : "https://github.com/tbrowder/CGI-Perl6/issues"
     },
     "provides"    : {
-        "CGI" : "lib/CGI.pm6"
+        "CGI"       : "lib/CGI.pm6"
+        "CGI::Vars" : "lib/CGI/Vars.pm6"
     },
     "test-depends"     : [
 	"Test::META",
-        "Cro::HTTP::Client"
+        "Cro::HTTP::Client",
+	"JSON::Fast"
     ],
     "depends" : [
     ],
