@@ -3,7 +3,8 @@
 use lib <.>;
 
 use CGI-Source;
-use CGI-Vars;
+use CGI::Vars;
+
 use Test;
 
 my $debug  = 0;
@@ -74,12 +75,12 @@ if $filter {
 }
 
 my %env;
-for %cgi.keys.sort -> $var {
+for %req-meta-vars.keys.sort -> $var {
     my $val = $var.lc;
     %env{$var} = $val;
     say $var if $debug > 1;
 }
-for %tls.keys.sort -> $var {
+for %tls-vars.keys.sort -> $var {
     my $val = $var.lc;
     %env{$var} = $val;
     say $var if $debug > 1;

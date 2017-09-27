@@ -12,8 +12,8 @@ print "Content-type: text/plain\n\n";
 #say $c.http;
 
 #=begin comment
-say "Environment variables:\n";
+#say "Environment variables:\n";
 for %*ENV.kv -> $k, $v {
-    say "$k: $v";
+    say "$k : $v";
 }
 #=end comment

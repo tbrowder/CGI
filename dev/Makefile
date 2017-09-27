@@ -1,5 +1,7 @@
 # generate the CGI.pm6 class module
 
+PERL := perl6 -I../lib
+
 EXE := ./test-cgi-utils.p6
 
 DESTDIR = ../lib
@@ -10,7 +12,7 @@ DEBUG =
 all: CGI
 
 CGI:
-	$(EXE) filter $(DEBUG) odir=$(DESTDIR)
+	$(PERL) $(EXE) filter $(DEBUG) odir=$(DESTDIR)
 
 doc: docs
 
