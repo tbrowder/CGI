@@ -6,19 +6,19 @@ use Cro::HTTP::Client;
 use CGI;
 
 # tests here use a live apache2 server (on the local host
-# and on travis
+# and on travis)
 
-#plan 3;
+plan 1;
 
 my $c = CGI.new;
 
 my $res;
 lives-ok { my $res = $c.http(:parameter<context-document-root>); }
 
-#=begin comment
+=begin comment
 like $res,
   /^ '/home/web-server-common/cgi-bin-cmn/' /;
-#=end comment
+=end comment
 
-done-testing;
+#done-testing;
 
