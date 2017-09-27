@@ -18,7 +18,18 @@ my $debug = 0;
 my $client = Cro::HTTP::Client.new(headers => [ User-agent => 'Cro' ]);
 # HTTP
 #my $host = 'localhost'; # apache2
+
 my $host = %*ENV<HOSTNAME> // 'juvat2'; # apache2
+{
+   my $cmd = 'hostname';
+   my $p = run $cmd, :out;
+   my $h = $p.out.slurp-rest;
+   $h .= trim;
+   say "DEBUG: h = '$h'";
+   $host = $h if $h;
+}
+
+
 my $port = 80;
 my $host-port = "$host:$port";
 
