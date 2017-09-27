@@ -1,6 +1,6 @@
 unit module CGI-Vars;
 
-our %cgi is export = set <
+our %std-cgi-vars is export = set <
 API_VERSION
 AUTH_TYPE
 CONTEXT_DOCUMENT_ROOT
@@ -58,7 +58,7 @@ TIME_YEAR
 USER_NAME
 >;
 
-our %tls is export = set <
+our %tls-cgi-vars is export = set <
 HTTPS
 SSL_CIPHER
 SSL_CIPHER_ALGKEYSIZE
