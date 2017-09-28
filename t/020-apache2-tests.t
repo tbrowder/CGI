@@ -71,10 +71,16 @@ for %req-meta-vars.keys -> $k {
 }
 is $no-vars, 0, 'MUST have request vars';
 
-my $elog = "/var/log/apache2/error.log";
+my $elog  = "/var/log/apache2/error.log";
+my $elog2 = "/var/log/apache2/error.log.1";
+my $elog3 = "/var/log/apache2/access.log";
+my $elog4 = "/var/log/apache2/access.log.1";
 if $host !~~ /juvat/ {
-    my $cmd = "sudo cat $elog";
-    shell $cmd;
+    for $elog, $elog2, $elog3, $elog4 -> $f {
+        note "DEBUG: contents of log file '$f'";
+        my $cmd = "sudo cat $f ";
+        shell $cmd;
+    }
 }
 
 # check the vars to see if any are NOT known?? not now
