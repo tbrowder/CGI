@@ -14,5 +14,5 @@ install:
     - rakudobrew build-zef
     #- zef --deps-only install .
     #- zef --force install Cro::HTTP::Client
-    #- zef --deps-only install .
-    - zef --force --deps-only install .
+    - zef --deps-only install .
+    #- zef --force --deps-only install .
