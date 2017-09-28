@@ -71,6 +71,12 @@ for %req-meta-vars.keys -> $k {
 }
 is $no-vars, 0, 'MUST have request vars';
 
+my $elog = "/var/log/apache2/error.log";
+if $host !~~ /juvat/ {
+    my $cmd = "sudo cat $elog";
+    shell $cmd;
+}
+
 # check the vars to see if any are NOT known?? not now
 
 # check the CGI variables
