@@ -7,7 +7,7 @@ perl6:
 
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -y apache2
+    - sudo apt-get install -qq apache2 apache2-bin apache2-data apache2-utils
     - sudo ./travis/install.sh
 
 install:
