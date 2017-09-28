@@ -25,7 +25,7 @@ my $host = %*ENV<HOSTNAME> // 'juvat2'; # apache2
    my $p = run $cmd, :out;
    my $h = $p.out.slurp-rest;
    $h .= trim;
-   say "DEBUG: h = '$h'";
+   say "DEBUG: h = '$h'" if $debug;
    $host = $h if $h;
 }
 
