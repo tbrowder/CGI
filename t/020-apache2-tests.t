@@ -10,7 +10,7 @@ use CGI::Vars;
 # tests here use a live apache2 server (on the local host
 # and on travis)
 
-plan 9;
+#plan 9;
 
 my $debug = 0;
 
@@ -36,8 +36,28 @@ my $host-port = "$host:$port";
 my ($resp, $body, %body, @body, $res, @res, %res, $url);
 
 $url = 'cgi-bin/show-env.cgi';
-lives-ok { $resp = await $client.get: "http://$host-port/$url" }, 'request environment list';
-lives-ok { $body = await $resp.body-text; }, 'the required environment list';
+try { lives-ok { $resp = await $client.get: "http://$host-port/$url" }, 'request environment list';
+CATCH { err-rep } 
+}
+try { lives-ok { $body = await $resp.body-text; }, 'the required environment list';
+CATCH { err-rep } 
+}
+
+sub err-rep($msg?) {
+    my $elog  = "/var/log/apache2/error.log";
+    my $elog2 = "/var/log/apache2/error.log.1";
+    my $elog3 = "/var/log/apache2/access.log";
+    my $elog4 = "/var/log/apache2/access.log.1";
+    if $host !~~ /juvat/ {
+        for $elog, $elog2, $elog3, $elog4 -> $f {
+            note "DEBUG: contents of log file '$f'";
+            my $cmd = "sudo cat $f ";
+            shell $cmd;
+        }
+    }
+    say "DEBUG: leaving debug sub err-rep";
+    say "  msg: $msg" if $msg;
+}
 
 my %env;
 %*ENV = {};
@@ -71,17 +91,6 @@ for %req-meta-vars.keys -> $k {
 }
 is $no-vars, 0, 'MUST have request vars';
 
-my $elog  = "/var/log/apache2/error.log";
-my $elog2 = "/var/log/apache2/error.log.1";
-my $elog3 = "/var/log/apache2/access.log";
-my $elog4 = "/var/log/apache2/access.log.1";
-if $host !~~ /juvat/ {
-    for $elog, $elog2, $elog3, $elog4 -> $f {
-        note "DEBUG: contents of log file '$f'";
-        my $cmd = "sudo cat $f ";
-        shell $cmd;
-    }
-}
 
 # check the vars to see if any are NOT known?? not now
 
@@ -98,3 +107,5 @@ like $resp, /Apache/, 'c.server-software matches';
 
 lives-ok { $resp = $c.remote-addr; }, 'c.remote-addr';
 like $resp, /\d*/, 'c.remote-addr matches';
+
+done-testing;
