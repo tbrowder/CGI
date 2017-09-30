@@ -2,7 +2,8 @@
 
 use Test;
 
-use Cro::HTTP::Client;
+#use Cro::HTTP::Client;
+use HTTP::UserAgent;
 use CGI;
 use CGI::Vars;
 
@@ -15,11 +16,13 @@ use CGI::Vars;
 my $debug = 0;
 
 # reuse defaults
-my $client = Cro::HTTP::Client.new(headers => [ User-agent => 'Cro' ]);
+#my $client = Cro::HTTP::Client.new(headers => [ User-agent => 'Cro' ]);
+my $client = HTTP::UserAgent.new(headers => [ User-agent => 'Cro' ]);
+
 # HTTP
 #my $host = 'localhost'; # apache2
 
-my $host = %*ENV<HOSTNAME> // 'juvat2'; # apache2
+my $host = %*ENV<HOSTNAME>; # apache2
 {
    my $cmd = 'hostname';
    my $p = run $cmd, :out;
@@ -36,11 +39,16 @@ my $host-port = "$host:$port";
 my ($resp, $body, %body, @body, $res, @res, %res, $url);
 
 $url = 'cgi-bin/show-env.cgi';
-try { lives-ok { $resp = await $client.get: "http://$host-port/$url" }, 'request environment list';
-CATCH { err-rep } 
+{
+    #lives-ok { $resp = await $client.get("http://$host-port/$url"); }, 'request environment list';
+    lives-ok { $resp = $client.get("http://$host-port/$url"); }, 'request environment list';
+    CATCH { err-rep }
 }
-try { lives-ok { $body = await $resp.body-text; }, 'the required environment list';
-CATCH { err-rep } 
+
+{
+    #lives-ok { $body = await $resp.body-text; }, 'the required environment list';
+    lives-ok { $body = $resp.content; }, 'the required environment list';
+    CATCH { err-rep }
 }
 
 sub err-rep($msg?) {
@@ -48,11 +56,19 @@ sub err-rep($msg?) {
     my $elog2 = "/var/log/apache2/error.log.1";
     my $elog3 = "/var/log/apache2/access.log";
     my $elog4 = "/var/log/apache2/access.log.1";
+    my @logs = $elog,
+               $elog2,
+               $elog3,
+               $elog4
+               ;
+
     if $host !~~ /juvat/ {
-        for $elog, $elog2, $elog3, $elog4 -> $f {
-            note "DEBUG: contents of log file '$f'";
-            my $cmd = "sudo cat $f ";
-            shell $cmd;
+        for @logs -> $f {
+	    if $f.IO.e && $f.IO.f {
+		note "DEBUG: contents of log file '$f'";
+		my $cmd = "sudo cat $f ";
+		shell $cmd;
+	    }
         }
     }
     say "DEBUG: leaving debug sub err-rep";
@@ -99,7 +115,8 @@ my $c = CGI.new;
 my @ekeys;
 lives-ok { @ekeys = $c.http; }, 'c.http';
 say @ekeys.gist if $debug;
-my @expect = <HTTP_HOST HTTP_USER_AGENT>;
+#my @expect = <HTTP_HOST HTTP_USER_AGENT>; # CRO
+my @expect = <HTTP_CONNECTION HTTP_HOST>; # UserAgent
 is-deeply @ekeys, @expect, 'http method';
 
 lives-ok { $resp = $c.server-software; }, 'c.server-software';
