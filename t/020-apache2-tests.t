@@ -17,19 +17,21 @@ my $debug = 0;
 
 # reuse defaults
 #my $client = Cro::HTTP::Client.new(headers => [ User-agent => 'Cro' ]);
-my $client = HTTP::UserAgent.new(headers => [ User-agent => 'Cro' ]);
+#my $client = HTTP::UserAgent.new(headers => [ User-agent => 'Cro' ]);
+my $client = HTTP::UserAgent.new;
 
 # HTTP
 #my $host = 'localhost'; # apache2
 
-my $host = %*ENV<HOSTNAME>; # apache2
+my $host = %*ENV<HOSTNAME> // 'juvat2'; # apache2
 {
    my $cmd = 'hostname';
-   my $p = run $cmd, :out;
+   my $p = run $cmd.words, :out;
    my $h = $p.out.slurp-rest;
    $h .= trim;
    say "DEBUG: h = '$h'" if $debug;
    $host = $h if $h;
+   $host = 'localhost' if !$h;
 }
 
 
@@ -47,7 +49,14 @@ $url = 'cgi-bin/show-env.cgi';
 
 {
     #lives-ok { $body = await $resp.body-text; }, 'the required environment list';
-    lives-ok { $body = $resp.content; }, 'the required environment list';
+    lives-ok {
+	if $resp.is-success {
+	    $body = $resp.content;
+	}
+	else {
+	    $body = $resp.status-line;
+	}
+    }, 'the required environment list';
     CATCH { err-rep }
 }
 
@@ -62,7 +71,7 @@ sub err-rep($msg?) {
                $elog4
                ;
 
-    if $host !~~ /juvat/ {
+    if $host { #!~~ /juvat/ {
         for @logs -> $f {
 	    if $f.IO.e && $f.IO.f {
 		note "DEBUG: contents of log file '$f'";
@@ -73,6 +82,7 @@ sub err-rep($msg?) {
     }
     say "DEBUG: leaving debug sub err-rep";
     say "  msg: $msg" if $msg;
+    exit 1;
 }
 
 my %env;
@@ -81,6 +91,8 @@ for $body.lines -> $line is copy {
     next if $line !~~ /\S/;
     say "DEBUG: line = '$line'" if $debug;
     # each line should be two words: key : value
+
+    # skip some lines
     my $idx = index $line, ':';
     my ($k, $v);
     if $idx.defined {
@@ -93,7 +105,7 @@ for $body.lines -> $line is copy {
 	say "DEBUG: k = '$k', v = '$v'" if $debug;
     }
     else {
-	die "FATAL:  No separator char ':'for line: '$line'";
+	warn "FATAL:  No separator char ':'for line: '$line'";
     }
 }
 
