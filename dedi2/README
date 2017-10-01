@@ -1,0 +1,13 @@
+Use <niceville.pm.org> for the test HTTP server.
+
+Use <usafa-1965.org> for the test HTTPS server.
+
+Make sure on dedi2 you link the normal perl6 to a shorter absolute
+version to be used by cgi scripts:
+
+  # ln -s /usr/local/rakudo.d/bin/perl6   /usr/bin/perl6
+
+Ensure we have the following dirs on dedi2:
+
+  # mkdir -p /myperl6/{bin,lib,lib/CGI}
+  # chown -R tbrowde.tbrowde /myperl6

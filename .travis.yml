@@ -5,14 +5,6 @@ language: perl6
 perl6:
     - latest
 
-before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -qq apache2 apache2-bin apache2-data apache2-utils
-    - sudo ./travis/install.sh
-
 install:
     - rakudobrew build-zef
-    #- zef --deps-only install .
-    #- zef --force install Cro::HTTP::Client
     - zef --deps-only install .
-    #- zef --force --deps-only install .
