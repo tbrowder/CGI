@@ -15,7 +15,8 @@
     },
     "test-depends"     : [
 	"Test::META",
-        "HTTP::UserAgent"
+        "HTTP::UserAgent",
+        "IO::Socket::SSL"
     ],
     "depends" : [
     ],
