@@ -1,5 +1,7 @@
 unit module CGI::Vars;
 
+# Note this is not normally used unless the t/*t tests fail.
+
 # the MUST request meta-vars from RFC 3875
 our %req-meta-vars is export = set <
 GATEWAY_INTERFACE
@@ -26,7 +28,6 @@ PATH_TRANSLATED
 REMOTE_HOST
 REMOTE_USER
 >;
-
 
 our %other-meta-vars is export = set <
 REMOTE_IDENT

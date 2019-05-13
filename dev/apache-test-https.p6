@@ -4,10 +4,10 @@ use HTTP::UserAgent;
 
 my $debug = 0;
 
-my $protocol = 'http';
+my $protocol = 'https';
 # this depends on one's server setup:
 my $url  = 'cgi-bin-cmn/show-env.cgi';
-my $host = 'niceville.pm.org'; # apache2
+my $host = 'usafa-1965.org'; # apache2
 
 my $client = HTTP::UserAgent.new;
 $client.timeout = 1;

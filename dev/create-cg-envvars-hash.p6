@@ -3,9 +3,12 @@
 my $debug  = 0;
 my $create = 0;
 
-# for creating a test %*ENV environment
-my $if = 'collected-envvars-data.txt';
-my $of = 'CGI-TEST-ENV-tmp.pm6';
+# for creating two vars hash modules
+my $if1 = 'cgi-http-envvars.txt';
+my $if2 = 'cgi-https-envvars.txt';
+
+my $of1 = 'HttpVars.pm6';
+my $of2 = 'HttpsVars.pm6';
 
 my $f2 = 'CGI-TEST-ENV.pm6';
 
@@ -15,7 +18,8 @@ if !@*ARGS {
 
     Modes:
 
-      create - uses $if to produce $of for copying to $f2
+      create - uses $if1, $if2 to produce
+                    $of1, $of2
 
     Options:
 
@@ -40,14 +44,17 @@ for @*ARGS -> $arg {
 }
 
 if $create {
-    create();
+    create($if1, $of1);
+    create($if2, $of2);
     say qq:to/HERE/;
-    Normal end. See output file
+    Normal end. See output files
 
-      $of
+        $of1
+        $of2
 
-    which can be compared to $f2
-    for final results.
+    which, if satisfactory, can be copied to
+
+        ../lib/CGI
 
     HERE
 
@@ -56,38 +63,36 @@ if $create {
 
 
 #### subroutines ####
-sub create() {
-    my $fho = open $of, :w;
+sub create($if, $of) {
+    my $fh = open $of, :w;
 
     # headers
-    my $headers = q:to/HERE/;
-    unit module CGI-Utils-TEST-ENV;
-
-    my %env = (
-    HERE
-
-    $fho.say: $headers;
-
-    my $fhi = open $if, :r;
-    for $fhi.lines -> $line {
-	# ignore or change certain lines
-	if $line ~~ /^ \s* '=' / {
-	    next;
-	}
-
-	# write all others
-	$fho.say: $line ~ ',';
+    my $title;
+    if $if eq 'cgi-http-envvars.txt' {
+        $title = 'CGI::HttpVars';
+    }
+    elsif $if eq 'cgi-https-envvars.txt' {
+        $title = 'CGI::HttpsVars';
+    }
+    else {
+        die "FATAL: Unexpected input file '$if'";
     }
 
-    # enders
-    my $enders = q:to/HERE/;
+
+    $fh.print(qq:to/HERE/);
+    unit module {$title};
+
+
+    our \%vars is export = \%(
+    HERE
+
+    for $if.IO.lines -> $line {
+	$fh.say: "    {$line},";
+    }
+
+    # ender
+    $fh.say(q:to/HERE/);
     );
-
-    sub get-env() is export {
-	return %env;
-    }
     HERE
-
-    $fho.say: $enders;
 
 } # create
