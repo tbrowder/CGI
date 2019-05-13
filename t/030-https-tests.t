@@ -24,7 +24,8 @@ my ($resp, $body, %body, @body, $res, @res, %res, $url);
 
 $url = 'cgi-test/show-env.cgi';
 {
-    lives-ok { $resp = $client.get("$protocol://$host/$url"); }, 'request environment list';
+    lives-ok { $resp = $client.get("$protocol://$host/$url"); }, 
+        'request environment list';
 }
 
 my $test-env = 0;
