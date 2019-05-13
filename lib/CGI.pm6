@@ -9,8 +9,8 @@ has $.debug is rw = 0;
 
 # methods from Perl 5 CGI;
 
-#| Method: server-
-#| Purpose: Return the name of the server
+#| Method: server-addr
+#| Purpose: Return the IP address of the server
 method server-addr() {
     return %.env<SERVER_ADDR> || 'localhost';
 } # server-name

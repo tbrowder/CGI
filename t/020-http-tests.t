@@ -80,18 +80,15 @@ lives-ok { @ekeys = $c.http; }, 'c.http';
 
 say @ekeys.gist if $debug;
 
-lives-ok { $resp = $c.server-software; }, 'c.server-software';
-like $resp, /Apache/, 'c.server-software';
-lives-ok { $resp = $c.remote-addr; }, 'c.remote-addr';
-like $resp, /\d*/, 'c.remote-addr';
-
+like $c.server-software, /Apache/, 'c.server-software';
+like $c.remote-addr, /\d*/, 'c.remote-addr';
 is $c.server-name, $serv-name, 'c.server-name';
 like $c.remote-host, /\S/, 'c.remote-host';
 is $c.server-protocol, 'HTTP/1.1', 'c.server-protocol';
 is $c.server-port, $serv-port, 'c.server-port';
 is $c.server-addr, $serv-addr, 'c.server-addr';
 
-is $c.virtual-host, $serv-name;
+is $c.virtual-host, $serv-name, 'c.virtual-host';
 is $c.protocol, 'HTTP', 'c.protocol';
 is $c.virtual-port, $serv-port, 'c.virtual-port';
 
