@@ -7,8 +7,6 @@ unit class CGI;
 has %.env         = %*ENV;
 has $.debug is rw = 0;
 
-# methods from Perl 5 CGI;
-
 #| Method: server-addr
 #| Purpose: Return the IP address of the server
 method server-addr() {
@@ -44,6 +42,12 @@ method remote-host() {
 method remote-addr() {
     return %.env<REMOTE_ADDR> || '127.0.0.1';
 } # remote-addr
+
+#| Method: remote-ip
+#| Purpose: Return the IP address of the remote host.
+method remote-ip() {
+    return %.env<REMOTE_ADDR> || '127.0.0.1';
+} # remote-ip
 
 #| Method: referer
 #| Purpose: Return the HTTP_REFERER: useful for generating a GO BACK button.
