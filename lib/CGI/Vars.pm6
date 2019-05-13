@@ -12,6 +12,12 @@ SERVER_PROTOCOL
 SERVER_SOFTWARE
 >;
 
+# MUST vars IIF there is a body
+our %req-body-meta-vars is export = set <
+CONTENT_LENGTH
+CONTENT_TYPE
+>;
+
 # ALL BELOW MUST BE TAKEN CARE OF FOR TOTAL HANDLING
 our %req-meta-vars-should is export = set <
 PATH_INFO
@@ -21,11 +27,10 @@ REMOTE_HOST
 REMOTE_USER
 >;
 
+
 our %other-meta-vars is export = set <
 REMOTE_IDENT
 AUTH_TYPE
-CONTENT_LENGTH
-CONTENT_TYPE
 >;
 
 # SHOULD VARS
