@@ -9,6 +9,12 @@ has $.debug is rw = 0;
 
 # methods from Perl 5 CGI;
 
+#| Method: server-
+#| Purpose: Return the name of the server
+method server-addr() {
+    return %.env<SERVER_ADDR> || 'localhost';
+} # server-name
+
 #| Method: server-name
 #| Purpose: Return the name of the server
 method server-name() {
@@ -19,7 +25,7 @@ method server-name() {
 #| Purpose: Return the name of the virtual-host (which is not always
 #|          the same as the server)
 method virtual-host() {
-    my $vh = .http('x_forwarded_host') || .http('host') || .server-name();
+    my $vh = self.http('x_forwarded_host') || self.http('host') || self.server-name();
     $vh ~~ s/\:\d+$//;           # get rid of port number
     return $vh;
 } # virtual-host
@@ -54,17 +60,17 @@ method server-software() {
 #| Method: virtual-port
 #| Purpose: Return the server port, taking virtual hosts into account
 method virtual-port() {
-    my $vh = .http('x_forwarded_host') || .http('host');
+    my $vh = self.http('x_forwarded_host') || self.http('host');
     if $vh {
         if $vh ~~ /\: (\d+) $/ {
 	    return +$0;
 	}
 	else {
-	    return .protocol() eq 'https' ?? 443 !! 80;
+	    return self.protocol() eq 'https' ?? 443 !! 80;
 	}
     }
     else {
-        return .server-port();
+        return self.server-port();
     }
 } # virtual-port
 
@@ -83,11 +89,11 @@ method server-protocol {
 #| Method: protocol
 #| Purpose: Return the protocol (currently 'http' or 'https')
 method protocol() {
-    return 'https' if uc(.https()) eq 'ON';
-    return 'https' if .server-port() == 443;
-    my $prot = .server-protocol();
+    return 'HTTPS' if uc(self.https()) eq 'ON';
+    return 'HTTPS' if self.server-port() == 443;
+    my $prot = self.server-protocol();
     my ($protocol,$version) = split '/', $prot;
-    $protocol .= lc;
+    $protocol .= uc;
     return $protocol;
     # return "\L{$protocol}\E"; # \L and \E ???: \L - Lowercase till \E
 } # protocol
@@ -115,12 +121,11 @@ method remote-user {
 method user-name() {
     return .http('from') || %.env<REMOTE_IDENT> || %.env<REMOTE_USER>;
 } # user-name
-
-
 #| Method: http
 #| Purpose: Return the value of an HTTP variable, or the list of HTTP_*
 #|          variables if no argument is provided
-method http(:$parameter is copy) {
+method http($param?) {
+    my $parameter = $param ?? $param !! '';
     say "DEBUG1: \$parameter => '$parameter'" if $.debug;
     if $parameter {
 	say "  DEBUG2: \$parameter => '$parameter'" if $.debug;
@@ -147,7 +152,8 @@ method http(:$parameter is copy) {
 #| Purpose: Return the value of HTTPS, or the value of an HTTPS
 #|          variable, or the list of HTTPS_* variables if no argument is
 #|          provided
-method https(:$parameter is copy) {
+method https($param?) {
+    my $parameter = $param ?? $param !! '';
     say "DEBUG1: \$parameter => '$parameter'" if $.debug;
     if $parameter {
 	say "  DEBUG2: \$parameter => '$parameter'" if $.debug;
@@ -170,7 +176,8 @@ method https(:$parameter is copy) {
 #| Method: ssl
 #| Purpose: Return the value of an SSL variable, or the list of SSL
 #|          variables if no argument is provided
-method ssl(:$parameter is copy) {
+method ssl($param?) {
+    my $parameter = $param ?? $param !! '';
     say "DEBUG1: \$parameter => '$parameter'" if $.debug;
     if $parameter {
 	say "  DEBUG2: \$parameter => '$parameter'" if $.debug;

@@ -5,102 +5,101 @@ use Test;
 use HTTP::UserAgent;
 
 use CGI;
-use CGI::Vars;
+use CGI::HttpVars;
 
 # tests here use a live apache2 server
 
-plan 10;
+#plan 10;
 
 my $debug = 0;
 
 # HTTP tests
-my $protocol = 'http';
-my $host = 'niceville.pm.org'; # apache2
-
-# reuse defaults
+my $protocol  = 'http';
 my $client = HTTP::UserAgent.new;
 $client.timeout = 1;
 
-my ($resp, $body, %body, @body, $res, @res, %res, $url);
+# expected values
+my $serv-name = 'niceville.pm.org'; # apache2
+my $serv-addr = '142.54.186.2';
+my $serv-soft = 'Apache/2.4.38 (Unix) OpenSSL/1.1.0j';
+my $serv-port = '80';
+
+my $http-conn = 'close';
+
+# reuse defaults
+my ($resp, $body, %body, @body, $res, @res, %res);
 
 # this depends on one's server setup
-$url = 'cgi-bin-cmn/show-env.cgi';
-{
-    lives-ok { $resp = $client.get("$protocol://$host/$url"); }, 
-        'request environment list';
-}
+my $url = 'cgi-bin-cmn/show-env.cgi';
+my $host = $serv-name;
+lives-ok { $resp = $client.get("$protocol://$host/$url"); },
+    'request environment list';
 
-my $test-env = 0;
-{
-    lives-ok {
-	if $resp.is-success {
-	    $body = $resp.content;
-	    $test-env = 1;
-	}
-	else {
-	    $body = $resp.status-line;
-	}
-    }, 'the required environment list';
-}
+ok $resp.is-success, 'successful query';
 
+$body = $resp.content;
+
+# create the remote server's environment for testing locally
 my %env;
-if $test-env {
-    %*ENV = {};
-    for $body.lines -> $line is copy {
-	next if $line !~~ /\S/;
-	say "DEBUG: line = '$line'" if $debug;
-	# each line should be two words: key : value
+for $body.lines -> $line is copy {
+    next if $line !~~ /\S/;
+    say "DEBUG: line = '$line'" if $debug;
+    # each line should be two words: key : value
 
-	# skip some lines
-	my $idx = index $line, ':';
-	my ($k, $v);
-	if $idx.defined {
-	    $k = $line.substr: 0, $idx;
-	    $v = $line.substr: $idx+1;
-	    $k .= trim;
-	    $v .= trim;
-	    %env{$k} = $v;
-	    %*ENV{$k} = $v;
-	    say "DEBUG: k = '$k', v = '$v'" if $debug;
-	}
-	else {
-	    say "WARNING: No separator char ':'for line: '$line'" if $debug > 1;
-	}
+    # skip some lines
+    my $idx = index $line, ':';
+    my ($k, $v);
+    if $idx.defined {
+	$k = $line.substr: 0, $idx;
+	$v = $line.substr: $idx+1;
+	$k .= trim;
+	$v .= trim;
+	%env{$k} = $v;
+	say "DEBUG: k = '$k', v = '$v'" if $debug;
+    }
+    else {
+	say "WARNING: No separator char ':'for line: '$line'" if $debug > 1;
     }
 }
 
-# ensure we have all MUST request CGI vars (not TLS yet)
+# ensure we have all expected vars
 my $no-vars = 0;
-for %req-meta-vars.keys -> $k {
-    if not %env{$k} {
-	++$no-vars;
+for %vars.keys -> $k {
+    if not %env{$k}:exists {
+        ++$no-vars;
 	warn "Std var '$k' is missing.";
     }
 }
-is $no-vars, 0, 'MUST have request vars';
+is $no-vars, 0, 'has expected HTTP vars';
 
-if $test-env {
-    # check the vars to see if any are NOT known?? not now
+# check the remote CGI variables with the CGI methods
+my $c = CGI.new: :env(%env);
 
-    # check the CGI variables
-    my $c = CGI.new;
-    my @ekeys;
-    lives-ok { @ekeys = $c.http; }, 'c.http';
+my @ekeys;
+lives-ok { @ekeys = $c.http; }, 'c.http';
 
-    say @ekeys.gist if $debug;
-    my @expect = <HTTP_CONNECTION HTTP_HOST>; # UserAgent
-    is-deeply @ekeys, @expect, 'http methods';
+say @ekeys.gist if $debug;
 
-    my $str = join ',', @expect;
-    like $str, /HTTP_/, 'http method';
+lives-ok { $resp = $c.server-software; }, 'c.server-software';
+like $resp, /Apache/, 'c.server-software';
+lives-ok { $resp = $c.remote-addr; }, 'c.remote-addr';
+like $resp, /\d*/, 'c.remote-addr';
 
-    lives-ok { $resp = $c.server-software; }, 'c.server-software';
+is $c.server-name, $serv-name, 'c.server-name';
+like $c.remote-host, /\S/, 'c.remote-host';
+is $c.server-protocol, 'HTTP/1.1', 'c.server-protocol';
+is $c.server-port, $serv-port, 'c.server-port';
+is $c.server-addr, $serv-addr, 'c.server-addr';
 
-    like $resp, /Apache/, 'c.server-software matches';
+is $c.virtual-host, $serv-name;
+is $c.protocol, 'HTTP', 'c.protocol';
+is $c.virtual-port, $serv-port, 'c.virtual-port';
 
-    lives-ok { $resp = $c.remote-addr; }, 'c.remote-addr';
+done-testing;
+=finish
 
-    like $resp, /\d*/, 'c.remote-addr matches';
-}
-
-#done-testing;
+$c.referer;
+$c.remote-ident;
+$c.auth-type;
+$c.remote-user;
+$c.user-name;
