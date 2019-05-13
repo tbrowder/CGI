@@ -4,6 +4,11 @@
 
 Based on Perl 5's CGI module.
 
+The current set of methods are merely easy short cuts
+for obtaining CGI environment variables to satisfy
+my current needs. I am happy
+to add useful methods for users who submit an issue.
+
 ## Methods
 
 See the methods and descriptions in file [lib/CGI.pm6](./lib/CGI.pm6).
@@ -20,3 +25,8 @@ word '[CGI]' in the subject line.
 
 The 'cgi-server' directory has instructions for setting up one's own
 CGI test server.
+
+## LICENSE
+
+This module is released under the same terms as Perl 6.
+
