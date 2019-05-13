@@ -1,18 +1,12 @@
-#!/usr/bin/perl6
+#!/usr/local/rakudo.d/bin/perl6
 
-use lib </myperl6/lib>;
-
-use CGI;
-
-#my $c = CGI.new;
+# This simple CGI program serves to
+# cause the test server to provide
+# the expected environment variables
+# to the client browser.
 
 print "Content-type: text/plain\n\n";
 
-#say $c.http;
-
-#=begin comment
-#say "Environment variables:\n";
 for %*ENV.kv -> $k, $v {
     say "$k : $v";
 }
-#=end comment
