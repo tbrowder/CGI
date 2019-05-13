@@ -9,7 +9,7 @@ use CGI::Vars;
 
 # tests here use a live apache2 server
 
-#plan 9;
+plan 10;
 
 my $debug = 0;
 
@@ -19,10 +19,12 @@ my $host = 'niceville.pm.org'; # apache2
 
 # reuse defaults
 my $client = HTTP::UserAgent.new;
+$client.timeout = 1;
 
 my ($resp, $body, %body, @body, $res, @res, %res, $url);
 
-$url = 'cgi-test/show-env.cgi';
+# this depends on one's server setup
+$url = 'cgi-bin-cmn/show-env.cgi';
 {
     lives-ok { $resp = $client.get("$protocol://$host/$url"); }, 
         'request environment list';
@@ -62,12 +64,11 @@ if $test-env {
 	    say "DEBUG: k = '$k', v = '$v'" if $debug;
 	}
 	else {
-	    say "WARNING: No separator char ':'for line: '$line'";
+	    say "WARNING: No separator char ':'for line: '$line'" if $debug > 1;
 	}
     }
 }
 
-=begin comment
 # ensure we have all MUST request CGI vars (not TLS yet)
 my $no-vars = 0;
 for %req-meta-vars.keys -> $k {
@@ -77,8 +78,6 @@ for %req-meta-vars.keys -> $k {
     }
 }
 is $no-vars, 0, 'MUST have request vars';
-=end comment
-
 
 if $test-env {
     # check the vars to see if any are NOT known?? not now
@@ -87,19 +86,21 @@ if $test-env {
     my $c = CGI.new;
     my @ekeys;
     lives-ok { @ekeys = $c.http; }, 'c.http';
+
     say @ekeys.gist if $debug;
-    #my @expect = <HTTP_HOST HTTP_USER_AGENT>; # CRO
     my @expect = <HTTP_CONNECTION HTTP_HOST>; # UserAgent
-    #is-deeply @ekeys, @expect, 'http method';
+    is-deeply @ekeys, @expect, 'http methods';
+
     my $str = join ',', @expect;
     like $str, /HTTP_/, 'http method';
 
     lives-ok { $resp = $c.server-software; }, 'c.server-software';
+
     like $resp, /Apache/, 'c.server-software matches';
 
     lives-ok { $resp = $c.remote-addr; }, 'c.remote-addr';
+
     like $resp, /\d*/, 'c.remote-addr matches';
 }
 
-
-done-testing;
+#done-testing;

@@ -37,7 +37,7 @@ method http(:$parameter is copy) {
     }
 
     # returning a list
-    return grep { /^ HTTP_ / }, %*ENV.keys;
+    return grep { /^ HTTP_ / }, %*ENV.keys.sort;
 } # http
 
 # Method: https
@@ -61,7 +61,7 @@ method https(:$parameter is copy) {
     }
 
     # returning a list
-    return grep { /^ HTTPS / }, %*ENV.keys;
+    return grep { /^ HTTPS | SSL / }, %*ENV.keys.sort;
 } # https
 
 # Method: ssl

@@ -4,7 +4,7 @@ PERL := perl6 -I../lib
 
 EXE := ./test-cgi-utils.p6
 
-DESTDIR = ../lib
+DESTDIR = ../lib-dev
 
 DEBUG =
 #DEBUG = debug
