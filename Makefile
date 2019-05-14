@@ -16,8 +16,8 @@ TA := TEST_AUTHOR=1
 default: test
 
 TESTS     := t/*.t
-BADTESTS  := bad-tests/*.t
-GOODTESTS := good-tests/*.t
+BADTESTS  := bad/*.t
+GOODTESTS := good/*.t
 
 # the original test suite (i.e., 'make test')
 test:

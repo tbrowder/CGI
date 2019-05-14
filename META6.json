@@ -16,10 +16,10 @@
         "CGI::HttpsVars" : "lib/CGI/HttpsVars.pm6"
     },
     "test-depends"     : [
-	"Test::META",
+	"Test::META"
     ],
     "depends" : [
-        "HTTP::UserAgent",
+        "HTTP::UserAgent"
     ],
     "resources" : [
     ],
